@@ -363,3 +363,12 @@ final userStatusStreamProvider =
     StreamProvider.family<String?, String>((ref, uid) {
   return ref.watch(userRepositoryProvider).watchUserStatus(uid);
 });
+
+// Provider pour les informations utilisateur complètes
+final userDataProvider = FutureProvider.family<User?, String>((ref, uid) async {
+  return ref.watch(userRepositoryProvider).fetchUser(uid);
+});
+
+final userDataStreamProvider = StreamProvider.family<User?, String>((ref, uid) {
+  return ref.watch(userRepositoryProvider).watchUser(uid);
+});

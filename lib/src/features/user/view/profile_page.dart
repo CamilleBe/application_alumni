@@ -422,40 +422,143 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   // Photo de profil
                   buildProfileImage(),
                   const SizedBox(height: 16),
-                  Text(
-                    user?.email ?? 'Email non disponible',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
-                  ),
+
+                  // Nom et prénom de l'utilisateur
+                  if (user != null)
+                    ref.watch(userDataStreamProvider(user.uid)).when(
+                          data: (userData) {
+                            print(
+                              'Données utilisateur récupérées: $userData',
+                            ); // Debug
+                            if (userData != null) {
+                              return Column(
+                                children: [
+                                  Text(
+                                    '${userData.firstName} ${userData.lastName}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    userData.email,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.grey[600],
+                                          fontSize: 15,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                children: [
+                                  Text(
+                                    'Nom non disponible',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[700],
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    user.email ?? 'Email non disponible',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.grey[600],
+                                          fontSize: 15,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                          loading: () => Column(
+                            children: [
+                              const SizedBox(
+                                height: 16,
+                                width: 16,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Chargement...',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Colors.grey[600],
+                                      fontSize: 15,
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                          error: (error, stack) {
+                            print(
+                              'Erreur lors du chargement des données utilisateur: $error',
+                            ); // Debug
+                            return Column(
+                              children: [
+                                Text(
+                                  'Erreur de chargement',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700],
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  user.email ?? 'Email non disponible',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Colors.grey[600],
+                                        fontSize: 15,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
                   const SizedBox(height: 12),
 
                   // Badge de statut
                   if (user != null)
                     ref.watch(userStatusStreamProvider(user.uid)).when(
-                      data: (status) {
-                        print('Statut récupéré: $status'); // Debug
-                        return status != null
-                            ? buildStatusBadge(status)
-                            : const SizedBox.shrink();
-                      },
-                      loading: () {
-                        print('Chargement du statut...'); // Debug
-                        return const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        );
-                      },
-                      error: (error, stack) {
-                        print(
-                          'Erreur lors du chargement du statut: $error',
-                        ); // Debug
-                        return const SizedBox.shrink();
-                      },
-                    ),
+                          data: (status) => status != null
+                              ? buildStatusBadge(status)
+                              : const SizedBox.shrink(),
+                          loading: () => const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          error: (error, stack) => const SizedBox.shrink(),
+                        ),
 
                   const SizedBox(height: 20),
 
