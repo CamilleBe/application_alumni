@@ -20,7 +20,7 @@ class UserRepository {
   final FirebaseStorage _storage;
   final ImagePicker _imagePicker = ImagePicker();
 
-  static String userPath(UserID id) => 'users/$id';
+  static String userPath(UserID id) => 'userProfiles/$id';
   static String userProfilePath(String uid) => 'userProfiles/$uid';
 
   /// Crée un nouvel utilisateur dans Firestore
@@ -38,6 +38,29 @@ class UserRepository {
   Stream<User?> watchUser(UserID id) {
     final ref = _userRef(id);
     return ref.snapshots().map((snapshot) => snapshot.data());
+  }
+
+  /// Récupère toutes les données utilisateur depuis userProfiles
+  Future<Map<String, dynamic>?> fetchUserProfile(String uid) async {
+    try {
+      final doc = await _firestore.doc(userProfilePath(uid)).get();
+      if (doc.exists) {
+        return doc.data();
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Stream pour surveiller toutes les données utilisateur
+  Stream<Map<String, dynamic>?> watchUserProfile(String uid) {
+    return _firestore.doc(userProfilePath(uid)).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data();
+      }
+      return null;
+    });
   }
 
   /// Récupère la bio de l'utilisateur
@@ -364,7 +387,18 @@ final userStatusStreamProvider =
   return ref.watch(userRepositoryProvider).watchUserStatus(uid);
 });
 
-// Provider pour les informations utilisateur complètes
+// Provider pour le profil utilisateur complet depuis userProfiles
+final userProfileProvider =
+    FutureProvider.family<Map<String, dynamic>?, String>((ref, uid) async {
+  return ref.watch(userRepositoryProvider).fetchUserProfile(uid);
+});
+
+final userProfileStreamProvider =
+    StreamProvider.family<Map<String, dynamic>?, String>((ref, uid) {
+  return ref.watch(userRepositoryProvider).watchUserProfile(uid);
+});
+
+// Provider pour les informations utilisateur complètes (ancienne méthode)
 final userDataProvider = FutureProvider.family<User?, String>((ref, uid) async {
   return ref.watch(userRepositoryProvider).fetchUser(uid);
 });

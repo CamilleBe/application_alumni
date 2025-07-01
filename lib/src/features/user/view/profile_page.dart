@@ -507,15 +507,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     _buildProfileImage(),
                     const SizedBox(height: 16),
 
-                    // Nom et prénom de l'utilisateur
+                    // Nom, prénom et badge de statut de l'utilisateur
                     if (user != null)
-                      ref.watch(userDataStreamProvider(user.uid)).when(
-                            data: (userData) {
-                              if (userData != null) {
+                      ref.watch(userProfileStreamProvider(user.uid)).when(
+                            data: (userProfile) {
+                              if (userProfile != null) {
                                 return Column(
                                   children: [
                                     Text(
-                                      '${userData.firstName} ${userData.lastName}',
+                                      '${(userProfile['firstName'] as String?) ?? ''} ${(userProfile['lastName'] as String?) ?? ''}',
                                       style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
@@ -525,13 +525,21 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      userData.email,
+                                      (userProfile['email'] as String?) ??
+                                          user.email ??
+                                          'Email non disponible',
                                       style: TextStyle(
                                         color: Colors.grey[600],
                                         fontSize: 16,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
+                                    const SizedBox(height: 12),
+                                    // Badge de statut
+                                    if (userProfile['statut'] != null)
+                                      _buildStatusBadge(
+                                        userProfile['statut'] as String,
+                                      ),
                                   ],
                                 );
                               } else {
@@ -554,18 +562,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-
-                    const SizedBox(height: 12),
-
-                    // Badge de statut
-                    if (user != null)
-                      ref.watch(userStatusStreamProvider(user.uid)).when(
-                            data: (status) => status != null
-                                ? _buildStatusBadge(status)
-                                : const SizedBox.shrink(),
-                            loading: () => const CircularProgressIndicator(),
-                            error: (error, stack) => const SizedBox.shrink(),
                           ),
 
                     const SizedBox(height: 32),
