@@ -266,7 +266,7 @@ class UserRepository {
   /// Récupère le statut de l'utilisateur
   Future<String?> fetchUserStatus(String uid) async {
     try {
-      final doc = await _firestore.doc(userProfilePath(uid)).get();
+      final doc = await _firestore.doc(userPath(uid)).get();
       if (doc.exists) {
         final data = doc.data();
         return data?['statut'] as String?;
@@ -279,7 +279,7 @@ class UserRepository {
 
   /// Stream pour surveiller les changements de statut
   Stream<String?> watchUserStatus(String uid) {
-    return _firestore.doc(userProfilePath(uid)).snapshots().map((snapshot) {
+    return _firestore.doc(userPath(uid)).snapshots().map((snapshot) {
       if (snapshot.exists) {
         final data = snapshot.data();
         return data?['statut'] as String?;

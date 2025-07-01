@@ -435,16 +435,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   // Badge de statut
                   if (user != null)
                     ref.watch(userStatusStreamProvider(user.uid)).when(
-                          data: (status) => status != null
-                              ? buildStatusBadge(status)
-                              : const SizedBox.shrink(),
-                          loading: () => const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          error: (error, stack) => const SizedBox.shrink(),
-                        ),
+                      data: (status) {
+                        print('Statut récupéré: $status'); // Debug
+                        return status != null
+                            ? buildStatusBadge(status)
+                            : const SizedBox.shrink();
+                      },
+                      loading: () {
+                        print('Chargement du statut...'); // Debug
+                        return const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
+                      error: (error, stack) {
+                        print(
+                          'Erreur lors du chargement du statut: $error',
+                        ); // Debug
+                        return const SizedBox.shrink();
+                      },
+                    ),
 
                   const SizedBox(height: 20),
 
