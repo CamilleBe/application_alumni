@@ -1,5 +1,6 @@
 import 'package:ekod_alumni/src/features/alumni/alumni.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// {@template alumni_detail_page}
@@ -103,7 +104,7 @@ class AlumniDetailPage extends ConsumerWidget {
 
                   const SizedBox(height: 24),
 
-                  // Section Contact (placeholder pour plus tard)
+                  // Section Contact
                   _buildSection(
                     title: 'Contact',
                     icon: Icons.contact_mail_outlined,
@@ -369,54 +370,90 @@ class AlumniDetailPage extends ConsumerWidget {
         _buildInfoRow(Icons.email, 'Email', alumni.email),
         const SizedBox(height: 16),
 
-        // Boutons d'action (placeholders pour plus tard)
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // TODO: Implémenter l'envoi d'email
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Fonctionnalité à venir'),
-                      backgroundColor: Color(0xFFE53E3E),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.email, size: 18),
-                label: const Text('Contacter'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE53E3E),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
+        // Bouton copier l'email
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => _copyEmailToClipboard(alumni.email, context),
+            icon: const Icon(Icons.content_copy, size: 18),
+            label: const Text("Copier l'email"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE53E3E),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  // TODO: Implémenter l'ajout aux favoris
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Fonctionnalité à venir'),
-                      backgroundColor: Colors.orange,
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.favorite_border, size: 18),
-                label: const Text('Favoris'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFE53E3E),
-                  side: const BorderSide(color: Color(0xFFE53E3E)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );
+  }
+
+  /// Copie l'email dans le presse-papiers
+  Future<void> _copyEmailToClipboard(String email, BuildContext context) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: email));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Email copié : $email',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(
+                  Icons.error,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Erreur lors de la copie',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: const Color(0xFFE53E3E),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
