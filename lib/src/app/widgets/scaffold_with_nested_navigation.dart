@@ -76,24 +76,35 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
         // selectedLabelStyle: context.textTheme.titleSmall,
         // unselectedLabelStyle: context.textTheme.titleSmall,
         elevation: 0,
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            icon: const Icon(
+            icon: Icon(
               Icons.home,
               size: _iconSize,
             ),
-            activeIcon: const Icon(
+            activeIcon: Icon(
               Icons.home,
               size: _iconSize,
             ),
             label: 'Accueil',
           ),
           BottomNavigationBarItem(
-            icon: const Icon(
+            icon: Icon(
+              Icons.people,
+              size: _iconSize,
+            ),
+            activeIcon: Icon(
+              Icons.people,
+              size: _iconSize,
+            ),
+            label: 'Alumni',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
               Icons.person,
               size: _iconSize,
             ),
-            activeIcon: const Icon(
+            activeIcon: Icon(
               Icons.person,
               size: _iconSize,
             ),
@@ -126,15 +137,20 @@ class ScaffoldWithNavigationRail extends StatelessWidget {
             selectedIndex: currentIndex,
             onDestinationSelected: onDestinationSelected,
             labelType: NavigationRailLabelType.all,
-            destinations: <NavigationRailDestination>[
+            destinations: const <NavigationRailDestination>[
               NavigationRailDestination(
-                icon: const Icon(Icons.home),
-                selectedIcon: const Icon(Icons.home),
+                icon: Icon(Icons.home),
+                selectedIcon: Icon(Icons.home),
                 label: Text('Accueil'),
               ),
               NavigationRailDestination(
-                icon: const Icon(Icons.person),
-                selectedIcon: const Icon(Icons.person),
+                icon: Icon(Icons.people),
+                selectedIcon: Icon(Icons.people),
+                label: Text('Alumni'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.person),
+                selectedIcon: Icon(Icons.person),
                 label: Text('Mon profil'),
               ),
             ],

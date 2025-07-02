@@ -1,5 +1,6 @@
 import 'package:ekod_alumni/src/app/app.dart';
 import 'package:ekod_alumni/src/app/routes/go_router_refresh_stream.dart';
+import 'package:ekod_alumni/src/features/alumni/view/alumni_directory_page.dart';
 import 'package:ekod_alumni/src/features/authentication/authentication.dart';
 import 'package:ekod_alumni/src/features/user/view/change_password_page.dart';
 import 'package:ekod_alumni/src/features/user/view/profile_page.dart';
@@ -15,7 +16,7 @@ part 'app_router.g.dart';
 /// ```dart
 /// context.goNamed(AppRoute.home.name)
 /// ```
-enum AppRoute { welcome, signIn, signUp, home, profile, changePassword }
+enum AppRoute { welcome, signIn, signUp, home, alumni, profile, changePassword }
 
 @riverpod
 GoRouter goRouter(Ref ref) {
@@ -39,6 +40,7 @@ GoRouter goRouter(Ref ref) {
       } else {
         // Si l'utilisateur n'est pas connecté et essaie d'accéder à une page protégée
         if (path == '/home' ||
+            path == '/alumni' ||
             path == '/profile' ||
             path == '/change-password') {
           return '/sign-in';
@@ -80,6 +82,16 @@ GoRouter goRouter(Ref ref) {
                 name: AppRoute.home.name,
                 pageBuilder: (_, __) =>
                     const NoTransitionPage(child: HomeView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/alumni',
+                name: AppRoute.alumni.name,
+                pageBuilder: (_, __) =>
+                    const NoTransitionPage(child: AlumniDirectoryPage()),
               ),
             ],
           ),
