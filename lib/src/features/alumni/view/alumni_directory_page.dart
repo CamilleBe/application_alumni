@@ -1,6 +1,7 @@
 import 'package:ekod_alumni/src/features/alumni/alumni.dart';
 import 'package:ekod_alumni/src/features/authentication/authentication.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// {@template alumni_directory_page}
@@ -393,15 +394,8 @@ class AlumniCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          // TODO(user): Navigation vers la page de détail
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Profil de ${alumni.fullName} (à implémenter)',
-              ),
-              backgroundColor: const Color(0xFFE53E3E),
-            ),
-          );
+          // Navigation vers la page de détail
+          context.go('/alumni/${alumni.id}');
         },
         child: Row(
           children: [
