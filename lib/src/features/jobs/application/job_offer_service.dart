@@ -284,14 +284,6 @@ final jobOfferByIdProvider =
   return ref.watch(jobOfferServiceProvider).getOfferById(id);
 });
 
-final availableCitiesProvider = FutureProvider<List<String>>((ref) {
-  return ref.watch(jobOfferServiceProvider).getAvailableCities();
-});
-
-final availableCompaniesProvider = FutureProvider<List<String>>((ref) {
-  return ref.watch(jobOfferServiceProvider).getAvailableCompanies();
-});
-
 final jobOffersStatsProvider = FutureProvider<Map<String, int>>((ref) {
   return ref.watch(jobOfferServiceProvider).getOffersStats();
 });

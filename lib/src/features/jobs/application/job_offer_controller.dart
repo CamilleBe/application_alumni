@@ -346,3 +346,13 @@ final jobOfferFormControllerProvider =
     StateNotifierProvider<JobOfferFormController, JobOfferFormState>((ref) {
   return JobOfferFormController(ref);
 });
+
+/// Provider pour les villes disponibles
+final availableCitiesProvider = FutureProvider<List<String>>((ref) {
+  return ref.watch(jobOfferServiceProvider).getAvailableCities();
+});
+
+/// Provider pour les entreprises disponibles
+final availableCompaniesProvider = FutureProvider<List<String>>((ref) {
+  return ref.watch(jobOfferServiceProvider).getAvailableCompanies();
+});
