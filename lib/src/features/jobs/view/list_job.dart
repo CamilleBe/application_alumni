@@ -1,11 +1,10 @@
+import 'package:ekod_alumni/src/widgets/carte-job.dart';
 import 'package:flutter/material.dart';
 
-import '../../../widgets/carte-job.dart';
-
 class ListJob extends StatelessWidget {
-  final bool showAppBar;
-
   const ListJob({super.key, this.showAppBar = true});
+
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +13,11 @@ class ListJob extends StatelessWidget {
       itemBuilder: (context, index) {
         return CarteJob(
           titre: 'Développeur Flutter ${index + 1}',
-          description:
-              'Nous recherchons un développeur Flutter passionné pour rejoindre notre équipe dynamique.',
+          description: 'Nous recherchons un développeur Flutter passionné '
+              'pour rejoindre notre équipe dynamique.',
           onTap: () {
             // Navigation vers les détails du job
-            print('Job $index sélectionné');
+            debugPrint('Job $index sélectionné');
           },
         );
       },
