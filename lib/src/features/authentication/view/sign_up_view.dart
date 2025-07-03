@@ -2,6 +2,7 @@ import 'package:ekod_alumni/src/features/authentication/application/auth_control
 import 'package:ekod_alumni/src/widgets/bouton-blanc.dart';
 import 'package:ekod_alumni/src/widgets/input-password.dart';
 import 'package:ekod_alumni/src/widgets/input.dart';
+import 'package:ekod_alumni/src/widgets/text.dart';
 import 'package:ekod_alumni/src/widgets/title.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +31,10 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CustomTitle(text: 'Inscription'),
+              const CustomTitle(
+                text: 'Inscription',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               InscriptionInput(
                 controller: _nomController,
@@ -80,7 +84,32 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
                   },
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+              Column(
+                children: [
+                  const CustomText(
+                    text: 'Vous avez déjà un compte ?',
+                    fontSize: 14,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  GestureDetector(
+                    onTap: () {
+                      context.go('/sign-in');
+                    },
+                    child: const Text(
+                      'Connectez-vous',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               WhiteButton(
                 text: "S'inscrire",
                 onPressed: () async {
