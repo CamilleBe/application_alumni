@@ -810,7 +810,8 @@ Offre consultée le ${_formatDate(DateTime.now())}
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                  "Application mail ouverte ! N'oubliez pas d'ajouter votre CV en pièce jointe."),
+                "Application mail ouverte ! N'oubliez pas d'ajouter votre CV en pièce jointe.",
+              ),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
             ),
@@ -863,7 +864,8 @@ Offre consultée le ${_formatDate(DateTime.now())}
                     icon: const Icon(Icons.copy, size: 20),
                     onPressed: () {
                       Clipboard.setData(
-                          ClipboardData(text: jobOffer.contactEmail!));
+                        ClipboardData(text: jobOffer.contactEmail!),
+                      );
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

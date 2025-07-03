@@ -68,18 +68,24 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
         onTap: onTap,
         currentIndex: currentIndex,
         type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        // backgroundColor: AppColors.white,
-        // selectedItemColor: AppColors.primary,
-        // unselectedItemColor: AppColors.mediumGrey,
-        // selectedLabelStyle: context.textTheme.titleSmall,
-        // unselectedLabelStyle: context.textTheme.titleSmall,
-        elevation: 0,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        backgroundColor: Colors.white,
+        selectedItemColor: const Color(0xFFE53E3E),
+        unselectedItemColor: Colors.grey,
+        selectedLabelStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+        ),
+        elevation: 8,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home,
+              Icons.home_outlined,
               size: _iconSize,
             ),
             activeIcon: Icon(
@@ -90,7 +96,7 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.people,
+              Icons.people_outline,
               size: _iconSize,
             ),
             activeIcon: Icon(
@@ -101,14 +107,14 @@ class ScaffoldWithNavigationBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.person,
+              Icons.person_outline,
               size: _iconSize,
             ),
             activeIcon: Icon(
               Icons.person,
               size: _iconSize,
             ),
-            label: 'Mon profil',
+            label: 'Profil',
           ),
         ],
       ),
@@ -137,21 +143,28 @@ class ScaffoldWithNavigationRail extends StatelessWidget {
             selectedIndex: currentIndex,
             onDestinationSelected: onDestinationSelected,
             labelType: NavigationRailLabelType.all,
+            selectedIconTheme: const IconThemeData(
+              color: Color(0xFFE53E3E),
+            ),
+            selectedLabelTextStyle: const TextStyle(
+              color: Color(0xFFE53E3E),
+              fontWeight: FontWeight.w600,
+            ),
             destinations: const <NavigationRailDestination>[
               NavigationRailDestination(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.home_outlined),
                 selectedIcon: Icon(Icons.home),
                 label: Text('Accueil'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.people),
+                icon: Icon(Icons.people_outline),
                 selectedIcon: Icon(Icons.people),
                 label: Text('Alumni'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.person),
+                icon: Icon(Icons.person_outline),
                 selectedIcon: Icon(Icons.person),
-                label: Text('Mon profil'),
+                label: Text('Profil'),
               ),
             ],
           ),

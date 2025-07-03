@@ -1,76 +1,56 @@
+import 'package:ekod_alumni/src/features/jobs/jobs.dart';
+import 'package:ekod_alumni/src/widgets/title.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:ekod_alumni/src/widgets/bottom_nav_bar.dart';
-import 'package:ekod_alumni/src/widgets/title.dart';
-import 'package:ekod_alumni/src/features/jobs/jobs.dart';
-import 'package:ekod_alumni/src/features/user/user.dart';
-
-class HomeView extends StatefulWidget {
+class HomeView extends ConsumerWidget {
   const HomeView({super.key});
-
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  int _selectedIndex = 0;
-
-  static final List<Widget> _pages = [
-    const _HomePage(),
-    const ListJob(),
-    const ProfilePage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-    );
-  }
-}
-
-class _HomePage extends ConsumerWidget {
-  const _HomePage();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = FirebaseAuth.instance.currentUser;
     final displayName = user?.displayName?.split(' ').firstOrNull ?? '';
 
-    return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomTitle(text: 'Bienvenue $displayName'),
-                const SizedBox(height: 16),
-                Text(
-                  'Découvrez les dernières opportunités',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 16),
-                _buildQuickActions(context, ref),
-              ],
-            ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Accueil',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
           ),
-          const Expanded(child: ListJob(showAppBar: false)),
-        ],
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTitle(text: 'Bienvenue $displayName'),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Découvrez les dernières opportunités',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildQuickActions(context, ref),
+                ],
+              ),
+            ),
+            const Expanded(child: ListJob(showAppBar: false)),
+          ],
+        ),
       ),
     );
   }
