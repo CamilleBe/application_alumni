@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ekod_alumni/src/features/jobs/domain/job_offer.dart';
 import 'package:ekod_alumni/src/features/jobs/application/job_offer_service.dart';
+import 'package:ekod_alumni/src/features/jobs/domain/job_offer.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// {@template create_job_offer_page}
 /// Page pour créer une nouvelle offre d'emploi

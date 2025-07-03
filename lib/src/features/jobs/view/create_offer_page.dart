@@ -123,7 +123,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
   Widget _buildAccessDeniedView() {
     return const Center(
       child: Padding(
-        padding: EdgeInsets.all(32.0),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -143,7 +143,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
             ),
             SizedBox(height: 16),
             Text(
-              'Seuls les alumni peuvent publier des offres d\'emploi.',
+              "Seuls les alumni peuvent publier des offres d'emploi.",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
@@ -252,7 +252,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Type d\'offre *',
+          "Type d'offre *",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -333,7 +333,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Le nom de l\'entreprise est obligatoire';
+          return "Le nom de l'entreprise est obligatoire";
         }
         return null;
       },
@@ -362,7 +362,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
     return TextFormField(
       controller: _urlEntrepriseController,
       decoration: const InputDecoration(
-        labelText: 'Site web de l\'entreprise',
+        labelText: "Site web de l'entreprise",
         hintText: 'https://www.exemple.com',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.language_outlined),
@@ -370,7 +370,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
       validator: (value) {
         if (value != null && value.trim().isNotEmpty) {
           final urlPattern = RegExp(
-            r'^https?://.*',
+            '^https?://.*',
             caseSensitive: false,
           );
           if (!urlPattern.hasMatch(value.trim())) {
@@ -386,7 +386,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
     return TextFormField(
       controller: _niveauEtudeController,
       decoration: const InputDecoration(
-        labelText: 'Niveau d\'étude requis',
+        labelText: "Niveau d'étude requis",
         hintText: 'ex: Bac+3, Master, Doctorat...',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.school_outlined),
@@ -444,7 +444,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'L\'email de contact est obligatoire';
+          return "L'email de contact est obligatoire";
         }
         final emailPattern = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
         if (!emailPattern.hasMatch(value.trim())) {
@@ -491,7 +491,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
   }
 
   Future<void> _selectDateLimite() async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 30)),
       firstDate: DateTime.now().add(const Duration(days: 1)),
@@ -540,7 +540,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
                 ),
               )
             : const Text(
-                'Publier l\'offre',
+                "Publier l'offre",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -622,7 +622,7 @@ class _CreateOfferPageState extends ConsumerState<CreateOfferPage> {
         // Rediriger vers la page de détail de l'offre créée
         context.go('/jobs/$offerId');
       } else if (mounted) {
-        throw Exception('Erreur lors de la création de l\'offre');
+        throw Exception("Erreur lors de la création de l'offre");
       }
     } catch (e) {
       if (mounted) {

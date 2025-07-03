@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// {@template job_offer_detail_page}
 /// Page de détail pour une offre d'emploi spécifique
@@ -755,29 +756,140 @@ class JobOfferDetailPage extends ConsumerWidget {
   }
 
   // Actions
-  void _handleApply(BuildContext context, JobOffer jobOffer) {
+  Future<void> _handleApply(BuildContext context, JobOffer jobOffer) async {
+    if (jobOffer.contactEmail == null || jobOffer.contactEmail!.isEmpty) {
+      // Fallback si pas d'email de contact
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Aucun email de contact disponible pour cette offre'),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Récupérer les informations du candidat
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final candidateName = currentUser?.displayName ?? 'Candidat';
+
+      // Construire l'email
+      final subject = Uri.encodeComponent(
+        'Candidature - ${jobOffer.titre} chez ${jobOffer.entreprise}',
+      );
+
+      final body = Uri.encodeComponent('''
+Bonjour,
+
+Je me permets de vous contacter suite à votre offre "${jobOffer.titre}" publiée sur la plateforme Ekod Alumni.
+
+Je suis intéressé(e) par ce poste et souhaiterais vous proposer ma candidature.
+
+Vous trouverez en pièce jointe mon CV et ma lettre de motivation.
+
+Je reste à votre disposition pour tout complément d'information.
+
+Cordialement,
+$candidateName
+
+---
+Candidature envoyée via Ekod Alumni
+Offre consultée le ${_formatDate(DateTime.now())}
+''');
+
+      final emailUrl =
+          'mailto:${jobOffer.contactEmail}?subject=$subject&body=$body';
+      final uri = Uri.parse(emailUrl);
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+
+        // Afficher un message de confirmation
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  "Application mail ouverte ! N'oubliez pas d'ajouter votre CV en pièce jointe."),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } else {
+        throw "Impossible d'ouvrir l'application mail";
+      }
+    } catch (e) {
+      if (context.mounted) {
+        // Fallback : afficher les informations de contact
+        _showEmailFallback(context, jobOffer);
+      }
+    }
+  }
+
+  void _showEmailFallback(BuildContext context, JobOffer jobOffer) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Postuler à cette offre'),
-        content: Text(
-          'Vous êtes sur le point de postuler pour le poste "${jobOffer.titre}" chez ${jobOffer.entreprise}.\n\nCette action vous redirigera vers la page de contact ou d\'application.',
+        title: const Text('Informations de contact'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Impossible d'ouvrir l'application mail automatiquement.\n\nVeuillez copier l'adresse email ci-dessous :",
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SelectableText(
+                      jobOffer.contactEmail!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.copy, size: 20),
+                    onPressed: () {
+                      Clipboard.setData(
+                          ClipboardData(text: jobOffer.contactEmail!));
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Email copié dans le presse-papiers'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Objet suggéré :\nCandidature - ${jobOffer.titre} chez ${jobOffer.entreprise}',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _showApplicationSuccess(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE53E3E),
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Confirmer'),
+            child: const Text('Fermer'),
           ),
         ],
       ),
@@ -861,10 +973,19 @@ class JobOfferDetailPage extends ConsumerWidget {
     }
   }
 
-  void _openCompanyWebsite(String url) {
-    // Cette fonctionnalité nécessiterait url_launcher
-    // Pour l'instant, on copie l'URL
-    Clipboard.setData(ClipboardData(text: url));
+  Future<void> _openCompanyWebsite(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        // Fallback : copier l'URL
+        Clipboard.setData(ClipboardData(text: url));
+      }
+    } catch (e) {
+      // Fallback : copier l'URL
+      Clipboard.setData(ClipboardData(text: url));
+    }
   }
 
   void _shareJobOffer(JobOffer? jobOffer) {
