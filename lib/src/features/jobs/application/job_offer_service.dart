@@ -2,6 +2,7 @@ import 'package:ekod_alumni/src/features/authentication/authentication.dart';
 import 'package:ekod_alumni/src/features/jobs/data/job_offer_repository.dart';
 import 'package:ekod_alumni/src/features/jobs/data/job_offer_repository_debug.dart';
 import 'package:ekod_alumni/src/features/jobs/domain/job_offer.dart';
+import 'package:ekod_alumni/src/features/user/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -96,9 +97,22 @@ class JobOfferService {
     final currentUser = ref.read(authStateChangesProvider).value;
     if (currentUser == null) return false;
 
-    // TODO: Récupérer le statut de l'utilisateur depuis le profil
-    // Pour l'instant, on autorise tous les utilisateurs connectés
-    return true;
+    try {
+      // Récupérer le profil utilisateur pour vérifier le statut
+      final userRepository = ref.read(userRepositoryProvider);
+      final userProfile =
+          await userRepository.fetchUserProfile(currentUser.uid);
+
+      if (userProfile == null) return false;
+
+      final statut = userProfile['statut'] as String?;
+      return statut?.toLowerCase() == 'alumni';
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erreur lors de la vérification du statut utilisateur: $e');
+      }
+      return false;
+    }
   }
 
   /// Crée une nouvelle offre d'emploi

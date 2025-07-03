@@ -3,6 +3,11 @@ import 'package:ekod_alumni/src/app/routes/go_router_refresh_stream.dart';
 import 'package:ekod_alumni/src/features/alumni/view/alumni_detail_page.dart';
 import 'package:ekod_alumni/src/features/alumni/view/alumni_directory_page.dart';
 import 'package:ekod_alumni/src/features/authentication/authentication.dart';
+import 'package:ekod_alumni/src/features/jobs/view/create_offer_page.dart';
+import 'package:ekod_alumni/src/features/jobs/view/edit_offer_page.dart';
+import 'package:ekod_alumni/src/features/jobs/view/job_offer_detail_page.dart';
+import 'package:ekod_alumni/src/features/jobs/view/list_job.dart';
+import 'package:ekod_alumni/src/features/jobs/view/my_offers_page.dart';
 import 'package:ekod_alumni/src/features/user/view/change_password_page.dart';
 import 'package:ekod_alumni/src/features/user/view/profile_page.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +30,12 @@ enum AppRoute {
   alumni,
   alumniDetail,
   profile,
-  changePassword
+  changePassword,
+  jobs,
+  jobDetail,
+  createOffer,
+  editOffer,
+  myOffers,
 }
 
 @riverpod
@@ -53,7 +63,12 @@ GoRouter goRouter(Ref ref) {
             path == '/alumni' ||
             path.startsWith('/alumni/') ||
             path == '/profile' ||
-            path == '/change-password') {
+            path == '/change-password' ||
+            path == '/jobs' ||
+            path.startsWith('/jobs/') ||
+            path == '/create-offer' ||
+            path.startsWith('/edit-offer/') ||
+            path == '/my-offers') {
           return '/sign-in';
         }
       }
@@ -139,6 +154,45 @@ GoRouter goRouter(Ref ref) {
             ],
           ),
         ],
+      ),
+      // Routes indépendantes pour les offres d'emploi
+      GoRoute(
+        path: '/jobs',
+        name: AppRoute.jobs.name,
+        pageBuilder: (_, __) => const NoTransitionPage(child: ListJob()),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: AppRoute.jobDetail.name,
+            pageBuilder: (context, state) {
+              final jobId = state.pathParameters['id']!;
+              return NoTransitionPage(
+                child: JobOfferDetailPage(jobOfferId: jobId),
+              );
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/create-offer',
+        name: AppRoute.createOffer.name,
+        pageBuilder: (_, __) =>
+            const NoTransitionPage(child: CreateOfferPage()),
+      ),
+      GoRoute(
+        path: '/edit-offer/:id',
+        name: AppRoute.editOffer.name,
+        pageBuilder: (context, state) {
+          final offerId = state.pathParameters['id']!;
+          return NoTransitionPage(
+            child: EditOfferPage(offerId: offerId),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/my-offers',
+        name: AppRoute.myOffers.name,
+        pageBuilder: (_, __) => const NoTransitionPage(child: MyOffersPage()),
       ),
     ],
   );

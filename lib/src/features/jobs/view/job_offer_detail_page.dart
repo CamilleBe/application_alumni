@@ -1,7 +1,9 @@
 import 'package:ekod_alumni/src/features/jobs/application/job_offer_service.dart';
 import 'package:ekod_alumni/src/features/jobs/domain/job_offer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// {@template job_offer_detail_page}
@@ -525,38 +527,70 @@ class JobOfferDetailPage extends ConsumerWidget {
 
   Widget _buildActionButtons(BuildContext context, JobOffer jobOffer) {
     final canApply = jobOffer.isActive;
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final isOwner = currentUser?.uid == jobOffer.publisherId;
 
     return Column(
       children: [
-        // Bouton principal de candidature
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton.icon(
-            onPressed: canApply ? () => _handleApply(context, jobOffer) : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  canApply ? const Color(0xFFE53E3E) : Colors.grey[400],
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+        // Bouton d'édition pour le propriétaire
+        if (isOwner) ...[
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton.icon(
+              onPressed: () => context.go('/edit-offer/${jobOffer.id}'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE53E3E),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
               ),
-            ),
-            icon: Icon(canApply ? Icons.send : Icons.block),
-            label: Text(
-              canApply
-                  ? 'Postuler maintenant'
-                  : _getDisabledButtonText(jobOffer),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              icon: const Icon(Icons.edit),
+              label: const Text(
+                'Modifier cette offre',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
-        ),
+          const SizedBox(height: 12),
+        ],
 
-        const SizedBox(height: 12),
+        // Bouton principal de candidature (masqué pour le propriétaire)
+        if (!isOwner) ...[
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton.icon(
+              onPressed:
+                  canApply ? () => _handleApply(context, jobOffer) : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    canApply ? const Color(0xFFE53E3E) : Colors.grey[400],
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              icon: Icon(canApply ? Icons.send : Icons.block),
+              label: Text(
+                canApply
+                    ? 'Postuler maintenant'
+                    : _getDisabledButtonText(jobOffer),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
 
         // Boutons secondaires
         Row(
@@ -576,24 +610,40 @@ class JobOfferDetailPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _contactRecruiter(context, jobOffer),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFE53E3E),
-                  side: const BorderSide(color: Color(0xFFE53E3E)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+            if (isOwner)
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => context.go('/my-offers'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFE53E3E),
+                    side: const BorderSide(color: Color(0xFFE53E3E)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
                   ),
+                  icon: const Icon(Icons.list_alt, size: 18),
+                  label: const Text('Mes offres'),
                 ),
-                icon: const Icon(Icons.message, size: 18),
-                label: const Text('Contacter'),
+              )
+            else
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _contactRecruiter(context, jobOffer),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFE53E3E),
+                    side: const BorderSide(color: Color(0xFFE53E3E)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  icon: const Icon(Icons.message, size: 18),
+                  label: const Text('Contacter'),
+                ),
               ),
-            ),
           ],
         ),
 
-        if (!canApply) ...[
+        if (!canApply && !isOwner) ...[
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
@@ -604,7 +654,11 @@ class JobOfferDetailPage extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                Icon(
+                  Icons.info_outline,
+                  color: Colors.orange[700],
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
