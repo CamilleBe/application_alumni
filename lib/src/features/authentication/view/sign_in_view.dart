@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
 import 'package:ekod_alumni/src/widgets/btn-rouge.dart';
 import 'package:ekod_alumni/src/widgets/input-password.dart';
 import 'package:ekod_alumni/src/widgets/input.dart';
 import 'package:ekod_alumni/src/widgets/text.dart';
 import 'package:ekod_alumni/src/widgets/title.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -30,7 +29,10 @@ class _SignInViewState extends State<SignInView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CustomTitle(text: 'Connexion'),
+              const CustomTitle(
+                text: 'Connexion',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               InscriptionInput(
                 controller: _emailController,
@@ -43,19 +45,21 @@ class _SignInViewState extends State<SignInView> {
                 hintText: 'Entrez votre mot de passe',
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Column(
                 children: [
                   const CustomText(
-                    text: 'Pas encore inscrit ? ',
+                    text: 'Pas encore inscrit ?',
                     fontSize: 14,
+                    textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 4),
                   GestureDetector(
                     onTap: () {
                       context.go('/sign-up');
                     },
                     child: const Text(
                       'Faites-le dès maintenant',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.red,
