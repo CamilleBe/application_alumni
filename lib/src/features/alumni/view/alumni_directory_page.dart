@@ -1,5 +1,4 @@
 import 'package:ekod_alumni/src/features/alumni/alumni.dart';
-import 'package:ekod_alumni/src/features/authentication/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -32,12 +31,6 @@ class AlumniDirectoryPage extends ConsumerWidget {
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => ref.read(authRepositoryProvider).signOut(),
-          ),
-        ],
       ),
       body: alumniAsync.when(
         data: (List<Alumni> alumni) => AlumniDirectoryView(alumni: alumni),
