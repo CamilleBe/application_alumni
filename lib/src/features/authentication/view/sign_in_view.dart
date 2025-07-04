@@ -102,11 +102,12 @@ class _SignInViewState extends State<SignInView> {
 
       switch (e.code) {
         case 'invalid-email':
-          message = 'Email invalide';
         case 'user-not-found':
-          message = 'Aucun utilisateur trouvé avec cet email';
         case 'wrong-password':
-          message = 'Mot de passe incorrect';
+        case 'invalid-credential':
+          message = 'Mail ou mot de passe invalide';
+        default:
+          message = 'Une erreur est survenue';
       }
 
       if (mounted) {
