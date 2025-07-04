@@ -28,22 +28,12 @@ class AlumniDetailPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: alumniAsync.when(
-          data: (alumni) => Text(
-            alumni?.fullName ?? 'Profil Alumni',
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          loading: () => const Text(
-            'Chargement...',
-            style: TextStyle(color: Colors.black),
-          ),
-          error: (_, __) => const Text(
-            'Erreur',
-            style: TextStyle(color: Colors.black),
+        title: const Text(
+          'Profil Alumni',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
@@ -175,6 +165,7 @@ class AlumniDetailPage extends ConsumerWidget {
         ),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Photo de profil (placeholder pour l'instant)
           Container(
